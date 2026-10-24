@@ -8,3 +8,7 @@ cp - for creating a copy of either a directory or a file
   the copies created exist under the curent working directory
 mv - to rename files eg. mv name.txt my_name.txt
    - to move files into directories - mv {file name} {directory name}/ 
+   - in one line: mv {directory name}/{file name} ./{new name}
+rm -  to remove files or directories
+    rm name.txt - removes name.txt
+    rmdir testdir - removes a directory. If the directory is not empty, use rmdir rf testdir
