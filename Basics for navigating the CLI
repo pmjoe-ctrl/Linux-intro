@@ -1,0 +1,10 @@
+mkdir - make directory
+touch - make a file
+echo - print out something
+    echo "Hello world" > name.txt - prints hello world inside the file name.txt.
+cp - for creating a copy of either a directory or a file
+  for a file: cp name.txt copy_name.txt  - creates a copy of name.txt
+  for a directory - cp -r testdir copy_testdir 
+  the copies created exist under the curent working directory
+mv - to rename files eg. mv name.txt my_name.txt
+   - to move files into directories - mv {file name} {directory name}/ 
