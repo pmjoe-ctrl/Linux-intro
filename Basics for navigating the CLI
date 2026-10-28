@@ -12,3 +12,6 @@ mv - to rename files eg. mv name.txt my_name.txt
 rm -  to remove files or directories
     rm name.txt - removes name.txt
     rmdir testdir - removes a directory. If the directory is not empty, use rmdir rf testdir
+cat - cat {file path} reads the content of a file
+head -  head -n1 {path} reads the first line of your file or else further specified
+tail - same use case as head only difference is it is used to read from the bottom
