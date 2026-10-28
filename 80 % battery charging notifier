@@ -1,0 +1,80 @@
+a lightweight background script on Linux that monitors your battery level and uses notify-send to alert you (and optionally play a sound) when the charging level hits 80%.
+Step 1: Create the Monitoring Script
+  mkdir -p ~/.local/bin
+  nano ~/.local/bin/battery-alert.sh
+######################################################################################
+Paste the following script into the file:  
+  #!/bin/bash
+  
+  # Target charge limit percentage
+  THRESHOLD=80
+  # File to track if notification was already sent during current charge cycle
+  NOTIFIED_FILE="/tmp/battery_notified_80"
+  
+  # Find battery directory name (usually BAT0 or BAT1)
+  BATTERY_PATH=$(ls -d /sys/class/power_supply/BAT* 2>/dev/null | head -n 1)
+  
+  if [ -z "$BATTERY_PATH" ]; then
+      exit 1
+  fi
+  
+  # Read battery capacity and charging status
+  CAPACITY=$(cat "$BATTERY_PATH/capacity")
+  STATUS=$(cat "$BATTERY_PATH/status")
+  
+  # If charging and reached or exceeded threshold
+  if [ "$STATUS" = "Charging" ] && [ "$CAPACITY" -ge "$THRESHOLD" ]; then
+      if [ ! -f "$NOTIFIED_FILE" ]; then
+          # Send desktop notification
+          notify-send -u critical "Battery Alert" "Battery is at ${CAPACITY}%. Unplug your charger!"
+          
+          # Optional: Play a warning sound (requires paplay / pulseaudio / pipewire)
+          paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null &
+          
+          # Mark as notified so it doesn't spam you
+          touch "$NOTIFIED_FILE"
+      fi
+  fi
+
+# Reset notification state when battery drops below threshold or stops charging
+if [ "$CAPACITY" -lt "$THRESHOLD" ] || [ "$STATUS" = "Discharging" ]; then
+    rm -f "$NOTIFIED_FILE"
+fi
+  ##################################################################################################
+ctrl + o then enter then ctrl + x
+
+chmod +x ~/.local/bin/battery-alert.sh
+###########################################################################################################
+
+Step 2: Automate with a systemd User Timer
+
+  mkdir -p ~/.config/systemd/user
+  nano ~/.config/systemd/user/battery-alert.service
+Paste this code:
+    [Unit]
+    Description=Battery Charge Alert Service
+    
+    [Service]
+    Type=oneshot
+    ExecStart=%h/.local/bin/battery-alert.sh
+
+
+nano ~/.config/systemd/user/battery-alert.timer
+    [Unit]
+    Description=Check battery percentage every minute
+    
+    [Timer]
+    OnBootSec=1min
+    OnUnitActiveSec=1min
+    Unit=battery-alert.service
+    
+    [Install]
+    WantedBy=timers.target
+
+
+Enable and start the timer:
+
+systemctl --user daemon-reload
+systemctl --user enable --now battery-alert.timer
+
+  
