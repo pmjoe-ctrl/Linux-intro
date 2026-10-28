@@ -15,3 +15,11 @@ rm -  to remove files or directories
 cat - cat {file path} reads the content of a file
 head -  head -n1 {path} reads the first line of your file or else further specified
 tail - same use case as head only difference is it is used to read from the bottom
+chown - change ownership
+    e.g sudo chown root:root {name of file}
+        sudo chown -R root:root {name of file} > for directories
+chmod - change permisions for self, goup and others
+    e.g chmod 700 {file name}
+    4: Read permission 2: Write permission 1: Execute permission 0: No permission
+    Using letters, user:u others:o and group:g
+    to change both owner and group: sudo chown username:groupname filename.txt
